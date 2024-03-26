@@ -29,7 +29,7 @@ while True:
     frame=cv2.flip(frame,1)
     results=model.predict(frame)
  #   print(results)
-    a=results[0].boxes.boxes
+    a=results[0].boxes.data
     px=pd.DataFrame(a).astype("float")
 #    print(px)
     list=[]
@@ -44,6 +44,12 @@ while True:
         d=int(row[5])
         c=class_list[d]
         list.append([x1,y1,x2,y2])
+        #track each object individually
+    bbox_idx=tracker.update(list)
+    for bbox in bbox_idx:
+        x4,y4,x5,y5,id=bbox
+        cv2.rectangle(frame, (x4,y4),(x5,y5),(0,255,0),2)
+        cv2.putText(frame, str(id),(x5, y5), cv2.FONT_HERSHEY_COMPLEX, 0.5,(0,0,255),2)
    
     cv2.imshow("FRAME", frame)
     if cv2.waitKey(1)&0xFF==27:
